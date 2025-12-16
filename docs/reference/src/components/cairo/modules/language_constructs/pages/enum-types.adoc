@@ -1,6 +1,45 @@
-= Enum types
+### Enum types
 
-This section is a work in progress.
+Enums in Cairo are sum types that allow defining a type by enumerating its 
+possible variants. They are useful for modeling data that can take on 
+multiple distinct forms.
 
-You are very welcome to contribute to this documentation by
-link:https://github.com/starkware-libs/cairo/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22[submitting a pull request].
+#### Definition syntax
+
+```cairo
+enum MyEnum {
+    UnitVariant,                        // No associated data
+    Simple: felt252,                    // Single value
+    Tuple: (u128, ContractAddress),     // Tuple-like
+    StructLike {                        // Struct-like
+        x: u256,
+        y: bool,
+    },
+}
+
+### Instantiation
+
+let unit = MyEnum::UnitVariant;
+let simple = MyEnum::Simple(42);
+let tuple = MyEnum::Tuple((100_u128, addr));
+let struct_like = MyEnum::StructLike { x: 1_u256, y: true };
+
+### Pattern matching
+
+match value {
+    MyEnum::UnitVariant => { /* handle unit */ },
+    MyEnum::Simple(v) => { /* use v */ },
+    MyEnum::Tuple((a, b)) => { /* use a, b */ },
+    MyEnum::StructLike { x, y } => { /* use x, y */ },
+}
+
+Enums support generics, derive traits (e.g., Copy, Drop, Serde, 
+starknet::Store), and can be used in storage with appropriate derives.You are very welcome to contribute to this documentation by submitting a 
+pull request.
+
+
+
+
+
+
+
