@@ -1,7 +1,75 @@
-= Implicit arguments
-// TODO(spapini): Fill with content.
+Implicit arguments
 
-This section is a work in progress.
+Implicit arguments are function parameters that are not passed explicitly at the call site, but are instead automatically provided by the compiler based on the surrounding context.
 
-You are very welcome to contribute to this documentation by
-link:https://github.com/starkware-libs/cairo/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22[submitting a pull request].
+They are primarily used to pass common data—such as builtins, system state, or execution context—without cluttering function signatures and calls.
+
+Motivation
+
+Implicit arguments help:
+
+Reduce verbosity when the same arguments are required by many functions.
+
+Enforce consistency by ensuring required context is always available.
+
+Improve readability by keeping function calls focused on their logical inputs.
+
+Declaring implicit arguments
+
+Implicit arguments are declared in a function signature using the implicit keyword.
+
+[source,cairo]
+fn foo(implicit x: felt252) -> felt252 {
+x + 1
+}
+
+In this example, x is an implicit argument. The caller does not need to supply it explicitly.
+
+Calling functions with implicit arguments
+
+When calling a function with implicit arguments, the compiler attempts to resolve them automatically from the current scope.
+
+[source,cairo]
+fn bar(implicit x: felt252) -> felt252 {
+foo()
+}
+
+Here, the implicit argument x required by foo is satisfied by the implicit argument x available in bar.
+
+Implicit argument resolution
+
+Implicit arguments are resolved according to the following rules:
+
+An implicit argument must be available in the current scope.
+
+The name and type of the implicit argument must match.
+
+If multiple candidates are available, the resolution must be unambiguous.
+
+If an implicit argument cannot be resolved, compilation fails.
+
+Mixing explicit and implicit arguments
+
+A function may have both explicit and implicit arguments.
+
+[source,cairo]
+fn add(implicit ctx: felt252, value: felt252) -> felt252 {
+ctx + value
+}
+
+When calling such functions, only explicit arguments are provided at the call site.
+
+[source,cairo]
+add(5)
+Explicitly passing implicit arguments
+
+In some cases, implicit arguments can be passed explicitly using named arguments.
+
+[source,cairo]
+foo(implicit x=10)
+
+This can be useful for testing or when overriding the default implicit value.
+
+Note
+
+Implicit arguments are part of a function’s interface and must be satisfied by all callers, either implicitly or explicitly. Their use should be limited to shared contextual data to avoid reducing code clarity.
